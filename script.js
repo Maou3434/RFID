@@ -59,12 +59,13 @@ async function fetchWithAuth(url, options = {}) {
     }
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`, {
             ...options,
             headers: {
                 ...options.headers,
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
 
