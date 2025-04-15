@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self' https://*.googleapis.com https://*.gstatic.com;
-    script-src 'self' https://*.googleapis.com https://accounts.google.com;
-    connect-src 'self' https://*.googleapis.com;
-    frame-src 'self' https://accounts.google.com;
-    style-src 'self' https://*.googleapis.com 'unsafe-inline';
-    font-src 'self' https://*.gstatic.com;">
+        default-src 'self' https://*.googleapis.com https://*.gstatic.com;
+        script-src 'self' https://*.googleapis.com https://accounts.google.com 'unsafe-inline';
+        style-src 'self' https://*.googleapis.com 'unsafe-inline';
+        connect-src 'self' https://*.googleapis.com;
+        frame-src 'self' https://accounts.google.com;
+    ">
     <title>RFID Access Control System</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://apis.google.com/js/api.js" async defer></script>
 </head>
 <body>
     <header>
@@ -27,7 +26,25 @@
                 </div>
                 <div class="header-actions">
                     <div id="auth-container">
-                        <div class="g_id_signin" data-text="signin_with" data-size="medium"></div>
+                        <div id="g_id_onload"
+                             data-client_id="96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com"
+                             data-callback="handleCredentialResponse"
+                             data-auto_prompt="false">
+                        </div>
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-theme="filled_blue"
+                             data-size="medium"
+                             data-text="sign_in_with"
+                             data-shape="rectangular"
+                             data-logo_alignment="left"
+                             data-width="250">
+                        </div>
+                        <div id="google-signin-fallback" style="display:none;">
+                            <button class="btn" onclick="window.location.href='https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com&redirect_uri=https://maou3434.github.io&scope=email profile'">
+                                <i class="fab fa-google"></i> Sign In with Google
+                            </button>
+                        </div>
                         <button id="signout-btn" class="btn" style="display:none; margin-left:10px;">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
                         </button>
@@ -123,13 +140,21 @@
     <script src="./script.js"></script>
     
     <script>
-        // Initialize Google Auth
-        function initGoogleAuth() {
-            google.accounts.id.initialize({
-                client_id: '96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com',
-                callback: handleCredentialResponse,
-                login_uri: 'https://maou3434.github.io/RFID/' 
-            });
+        // Handle the sign-in response
+        function handleCredentialResponse(response) {
+            if (response.credential) {
+                localStorage.setItem('google_access_token', response.credential);
+                document.getElementById('signout-btn').style.display = 'inline-block';
+                document.querySelector('.g_id_signin').style.display = 'none';
+                document.getElementById('google-signin-fallback').style.display = 'none';
+                document.getElementById('last-updated').textContent = 'Last updated: Loading...';
+                document.querySelectorAll('.auth-required').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.pointerEvents = 'auto';
+                });
+                document.getElementById('search-input').disabled = false;
+                window.location.reload();
+            }
         }
         
         // Sign out handler
@@ -137,7 +162,7 @@
             google.accounts.id.disableAutoSelect();
             localStorage.removeItem('google_access_token');
             document.getElementById('signout-btn').style.display = 'none';
-            document.querySelector('.g_id_signin').style.display = 'inline-block';
+            document.querySelector('.g_id_signin').style.display = 'block';
             document.getElementById('last-updated').textContent = 'Not signed in';
             document.querySelectorAll('.auth-required').forEach(el => {
                 el.style.opacity = '0.5';
@@ -154,11 +179,18 @@
 
         // Check auth status on load
         window.addEventListener('DOMContentLoaded', () => {
-            initGoogleAuth();
+            // Fallback check if Google button doesn't load
+            setTimeout(() => {
+                if (!document.querySelector('.g_id_signin').children.length) {
+                    document.getElementById('google-signin-fallback').style.display = 'block';
+                    document.querySelector('.g_id_signin').style.display = 'none';
+                }
+            }, 3000);
             
             if (localStorage.getItem('google_access_token')) {
                 document.getElementById('signout-btn').style.display = 'inline-block';
                 document.querySelector('.g_id_signin').style.display = 'none';
+                document.getElementById('google-signin-fallback').style.display = 'none';
                 document.querySelectorAll('.auth-required').forEach(el => {
                     el.style.opacity = '1';
                     el.style.pointerEvents = 'auto';
