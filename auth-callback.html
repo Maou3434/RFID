@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Callback</title>
+    <script>
+        function getTokenFromHash() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            return params.get('access_token');
+        }
+
+        const token = getTokenFromHash();
+        if (token) {
+            localStorage.setItem('google_access_token', token);
+            window.opener.postMessage({
+                type: 'oauth-success',
+                token: token
+            }, 'https://maou3434.github.io');
+        }
+        window.close();
+    </script>
+</head>
+<body>
+    <p>Authentication complete. You may close this window.</p>
+</body>
+</html>
