@@ -28,7 +28,8 @@
                     <div id="auth-container">
                         <div id="g_id_onload"
                              data-client_id="96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com"
-                             data-callback="handleCredentialResponse"
+                             data-login_uri="https://maou3434.github.io/RFID/"
+                             data-ux_mode="redirect"
                              data-auto_prompt="false">
                         </div>
                         <div class="g_id_signin"
@@ -40,14 +41,6 @@
                              data-logo_alignment="left"
                              data-width="250">
                         </div>
-                        <div id="google-signin-fallback" style="display:none;">
-                            <button class="btn" onclick="window.location.href='https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com&redirect_uri=https://maou3434.github.io&scope=email profile'">
-                                <i class="fab fa-google"></i> Sign In with Google
-                            </button>
-                        </div>
-                        <button id="signout-btn" class="btn" style="display:none; margin-left:10px;">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </button>
                     </div>
                     <div class="last-updated" id="last-updated">Not signed in</div>
                     <button class="btn auth-required" id="refresh-btn" disabled>
@@ -144,60 +137,27 @@
         function handleCredentialResponse(response) {
             if (response.credential) {
                 localStorage.setItem('google_access_token', response.credential);
-                document.getElementById('signout-btn').style.display = 'inline-block';
-                document.querySelector('.g_id_signin').style.display = 'none';
-                document.getElementById('google-signin-fallback').style.display = 'none';
-                document.getElementById('last-updated').textContent = 'Last updated: Loading...';
-                document.querySelectorAll('.auth-required').forEach(el => {
-                    el.style.opacity = '1';
-                    el.style.pointerEvents = 'auto';
-                });
-                document.getElementById('search-input').disabled = false;
-                window.location.reload();
+                // Update UI and reload
+                window.location.href = 'https://maou3434.github.io/RFID/';
             }
         }
-        
-        // Sign out handler
-        document.getElementById('signout-btn').addEventListener('click', () => {
-            google.accounts.id.disableAutoSelect();
-            localStorage.removeItem('google_access_token');
-            document.getElementById('signout-btn').style.display = 'none';
-            document.querySelector('.g_id_signin').style.display = 'block';
-            document.getElementById('last-updated').textContent = 'Not signed in';
-            document.querySelectorAll('.auth-required').forEach(el => {
-                el.style.opacity = '0.5';
-                el.style.pointerEvents = 'none';
-            });
-            document.getElementById('search-input').disabled = true;
-            document.getElementById('data-container').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Please sign in to view access logs</p>
-                </div>
-            `;
-        });
 
-        // Check auth status on load
-        window.addEventListener('DOMContentLoaded', () => {
-            // Fallback check if Google button doesn't load
-            setTimeout(() => {
-                if (!document.querySelector('.g_id_signin').children.length) {
-                    document.getElementById('google-signin-fallback').style.display = 'block';
-                    document.querySelector('.g_id_signin').style.display = 'none';
-                }
-            }, 3000);
+        // Initialize Google Auth
+        function initGoogleAuth() {
+            google.accounts.id.initialize({
+                client_id: '96464170703-r84vkai7qhrvhhf52podclrg4r0i2s6k.apps.googleusercontent.com',
+                callback: handleCredentialResponse,
+                login_uri: 'https://maou3434.github.io/RFID/'
+            });
             
+            // Check auth status on load
             if (localStorage.getItem('google_access_token')) {
                 document.getElementById('signout-btn').style.display = 'inline-block';
                 document.querySelector('.g_id_signin').style.display = 'none';
-                document.getElementById('google-signin-fallback').style.display = 'none';
-                document.querySelectorAll('.auth-required').forEach(el => {
-                    el.style.opacity = '1';
-                    el.style.pointerEvents = 'auto';
-                });
-                document.getElementById('search-input').disabled = false;
             }
-        });
+        }
+
+        window.addEventListener('DOMContentLoaded', initGoogleAuth);
     </script>
 </body>
 </html>
