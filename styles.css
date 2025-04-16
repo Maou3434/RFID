@@ -376,3 +376,104 @@ header {
         width: 100%;
     }
 }
+
+.registered-rfids {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.rfid-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rfid-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.rfid-count {
+    background-color: var(--light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.rfid-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rfid-table thead th {
+    background-color: var(--light);
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.rfid-table tbody tr {
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.rfid-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.rfid-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.rfid-table td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.rfid-tag {
+    font-family: monospace;
+    font-size: 14px;
+    color: var(--dark);
+    background-color: var(--light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.rfid-date {
+    color: var(--gray);
+    font-size: 13px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--light-gray);
+    margin-bottom: 30px;
+}
+
+.tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab:hover {
+    color: var(--primary);
+}
+
+.tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
